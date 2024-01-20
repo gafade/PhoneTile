@@ -24,3 +24,5 @@ Cargo.lock
 *.gif
 
 *.idsig
+/server/.vscode
+/.vs
