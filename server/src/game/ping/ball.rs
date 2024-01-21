@@ -1,6 +1,11 @@
 use std::time;
+use std::vec;
 
 use super::racket::Racket;
+use crate::network::player;
+
+use super:: game::LONGUEUR;
+use super::game::LARGEUR;
 
 #[derive(Debug, Clone)]
 
@@ -15,7 +20,9 @@ pub struct Ball {
 
     pub state:f32,//en cours de creation/ en mouvement/ dans le but/fin du jeu
 
-    size:f64,//uniquement visuel/pas distordu par la taille des écrans
+    pub size:f64,//uniquement visuel/pas distordu par la taille des écrans
+
+    //Les dimensions du terrain prises de game.rs 
    
 }
 
@@ -49,17 +56,17 @@ pub fn update_status(&mut self,
     //Gestion bords terrain (et pas de l'écran)
     if self.posX < 0. {
         self.speedX = self.speedX.abs()+1.;}
-    if self.posX > 500. {// TODO Xmax
+    if self.posX > LARGEUR {// TODO Xmax
         self.speedX = -self.speedX.abs()-1.;}
 
 
         if self.posY < 0.{
             self.speedY=self.speedY.abs()+1.;}
-        if self.speedY > 5000.{// TODO Ymax
+        if self.speedY > LONGUEUR{// TODO Ymax
             self.speedY= - self.speedY.abs() - 1.;}
 
         //Gestion collision avec players
-        for p in players{
+        for p in players{//cest une racket attention
             if (self.posX-p.pos).abs()<p.sizeX &&
             (self.posY-p.height).abs()<p.sizeY{
                 //empecher clipping/multi rebonds
@@ -77,7 +84,8 @@ pub fn update_status(&mut self,
 
     }
 
-    pub fn exit(//la flemme et destructeur : on la pose en dehors terrain
+    pub fn exit(//la flemmede faire un destructeur : on la pose en dehors terrain
+        //ou game la sort de la liste active_balls
         &mut self
     ){
         self.speedX=0.;
@@ -92,8 +100,8 @@ pub fn update_status(&mut self,
 
 
         //TODO : trouver centre du terrain
-        self.posX=250.;
-        self.posY=2500.;
+        self.posX=LARGEUR/2.;
+        self.posY=LONGUEUR/2.;
 
         if(dir%4==0){
             self.speedX=Speed;
@@ -112,5 +120,26 @@ pub fn update_status(&mut self,
             self.speedY=-Speed;
                         }
         
+    }
+
+
+
+    //pour la communication
+    pub fn circle(self, p : &player::Player) -> Vec<u8>{
+
+        let mut data = vec::Vec::new();
+
+        let (x, y) = p.to_local_coordinates(self.posX as f32,self.posY as f32);//on sen fiche selon y : cest un pong
+        let pos_x = x.to_be_bytes();
+        let pos_y = y.to_be_bytes();
+        data.append(&mut pos_x.to_vec());
+        data.append(&mut pos_y.to_vec());
+
+        //pour sizeX sizeY
+        let radius = self.size.to_be_bytes();
+        data.append(&mut radius.to_vec());
+
+
+        data//[posx[],posy[],radius[]]
     }
 }

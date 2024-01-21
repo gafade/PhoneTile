@@ -10,16 +10,22 @@ use std::vec;
 //MODULES
 use crate::network::player;
 
-mod ball;
-mod racket;
+use super::ball::Ball;
+use super::racket::Racket;
+
+//?????
+//mod ball;
+//mod racket;
 
 
 
 
 
 //Constantes DIMENSIONNELLES
-const LONGUEUR: f64 = 2000.;//virtuelles
-const LARGEUR: f64 = 500.;//virtuelle
+pub const LONGUEUR: f64 = 5000.;//virtuelles
+pub const LARGEUR: f64 = 500.;//virtuelle
+
+pub const FILET: f64 = 100.;// à combien de pixels on affiche la racket
 
 const SPEED_EXCESS: f64 = 0.3;
 const FRICTION: f64 = 0.1;
@@ -47,7 +53,12 @@ pub struct Game {
 impl Game {
     /// Create a new game structure. If the map parameter is an empty list,
     /// the map is randomly created.
-    pub fn new(
+    pub fn new(a:f64, b:f64, c:f64){
+
+
+    }
+
+        /*
         mut map: Vec<Bezier>,
         n_cars: usize,
         dimensions: &Vec<(f64, f64)>,
@@ -65,28 +76,27 @@ impl Game {
         //     "The given circuit is not closed. Please make sure the first and last point coincide."
         // );
         Ok(Game { map, cars })
-    }
 
-    /// Generate the points at a third of the minimal height of two consecutive phones to build the Bezier curves. The circuit is build anticlockwise.
+        */
+    
 
-    #[allow(unused)]
-    fn get_map(&self) -> Vec<Bezier> {
-        self.map.clone()
-    }
+    // Generate the points at a third of the minimal height of two consecutive phones to build the Bezier curves. The circuit is build anticlockwise.
 
-
-
+/*#[allow(unused)]
+fn get_map(&self) -> Vec<Bezier> {
+    self.map.clone()
+    }*/
 }
 
 //un vecteur de vecteur pour permettre de 
 //convertir des coord en physique et de celles en virtuel
-pub fn gen_map(players: &mut [player::Player]) -> (Vec<f32> ,Vec<f32>) {
+pub fn get_screen(players: &mut [player::Player]) -> (Vec<f32> ,Vec<f32>) {
     // for now build a map of the width the sum of width and heigh max(height)
     let mut width = 0.;
     let mut height = 0.;
 
-    let mut W: Vec<f32> ;
-    let mut H: Vec<f32> ;
+    let mut W: Vec<f32>=vec![] ;
+    let mut H: Vec<f32> =vec![];
     for p in players.iter() {
         width += p.physical_width;
         height = p.physical_height.max(height);
@@ -96,11 +106,13 @@ pub fn gen_map(players: &mut [player::Player]) -> (Vec<f32> ,Vec<f32>) {
 
     }
 
-
+    (W,H)
 
 }
 
+pub fn get_pos(){}
 
+/* 
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,3 +158,4 @@ mod tests {
         Game::new(Vec::new(), 1, &phone_size).unwrap();
     }
 }
+*/
