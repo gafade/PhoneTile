@@ -51,7 +51,7 @@ impl Racket {
     }
 
     //Envoyer les coorddonnees des rectangles et leur ID et largeur longueur
-    pub fn rect(self, p : &player::Player) -> Vec<u8>{
+    pub fn rect(&self, p : &player::Player) -> Vec<u8>{
 
         let mut data = vec::Vec::new();
         data.push((self.id as u8).to_be());

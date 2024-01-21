@@ -45,7 +45,7 @@ impl Ball {
     }
 
 pub fn update_status(&mut self, 
-    players : Vec<Racket> ,
+    players : &mut Vec<Racket> ,
     internal_timer: time::Instant,
 ) {
     //Gestion mouvement
@@ -70,7 +70,11 @@ pub fn update_status(&mut self,
             if (self.posX-p.pos).abs()<p.sizeX &&
             (self.posY-p.height).abs()<p.sizeY{
                 //empecher clipping/multi rebonds
-
+                self.speedX=-self.speedX;
+                self.speedY=-self.speedY;
+                
+                self.posY=p.height+p.sizeY*self.speedY.signum()//si speedY>0 on ETAIT en train de descendre 
+                //donc le rebondi implique de monter la balle
             }
         }
 
@@ -125,7 +129,7 @@ pub fn update_status(&mut self,
 
 
     //pour la communication
-    pub fn circle(self, p : &player::Player) -> Vec<u8>{
+    pub fn circle(&self, p : &player::Player) -> Vec<u8>{
 
         let mut data = vec::Vec::new();
 
