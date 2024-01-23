@@ -15,6 +15,7 @@ use std::fmt::Display;
 pub mod racer;
 pub mod snake;
 pub mod maze_fight;
+pub mod ping;
 
 /// add your game in enum
 #[derive(Clone, Copy, PartialEq)]
@@ -22,6 +23,7 @@ pub enum Game {
     Racer,
     Snake,
     MazeFight,
+    Ping,
     Test,
     Unknown,
 }
@@ -34,6 +36,7 @@ impl From<Game> for u16 {
             Game::Racer => 1,
             Game::Snake => 2,
             Game::MazeFight => 3,
+            Game::Ping =>4,
             Game::Test => 0x80,
             Game::Unknown => 0xff,
         }
@@ -46,6 +49,7 @@ impl From<u16> for Game {
             1 => Game::Racer,
             2 => Game::Snake,
             3 => Game::MazeFight,
+            4 => Game::Ping,
             0x80 => Game::Test,
             _ => Game::Unknown,
         }
@@ -59,6 +63,7 @@ pub fn title(game_id: u16) -> String {
         1 => "Racer",
         2 => "Snake",
         3 => "Maze",
+        4 => "Ping",
         _ => "Unknown ???",
     })
 }
@@ -69,6 +74,7 @@ impl Display for Game {
             Game::Racer => write!(f, "Racer"),
             Game::Snake => write!(f, "Snake"),
             Game::MazeFight => write!(f, "MazeFight"),
+            Game::Ping => write!(f,"Ping"),
             Game::Test => write!(f, "Test"),
             _ => write!(f, "Unknown"),
         }
@@ -82,7 +88,8 @@ impl Game {
         match self {
             Game::Racer => GameStruct::new(String::from("Racer"), Box::new(racer::main_game), None),
             Game::MazeFight => GameStruct::new(String::from("Maze Fight"), Box::new(|network| unsafe{maze_fight::main_game(network)}), Some(9)),
-            _ => panic!("this game is still awaiting for your awesome code ..."),
+            Game::Ping => GameStruct::new(String::from("Ping"), Box::new(ping::main_game),None),
+            _ => panic!("this game is still awaiting for your awesome code ..."),//awwww... :)
         }
     }
 }

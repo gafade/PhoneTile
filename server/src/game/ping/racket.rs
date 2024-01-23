@@ -21,12 +21,14 @@ pub struct Racket {
 }
 
 impl Racket {
-    pub fn new(p: &player::Player,sX:f64) -> Racket {
+    pub fn new(p: &player::Player,sX:f64,sY:f64) -> Racket {
         Racket {
 
             id:p.rank as usize,
             pos:0.,
-            height:200.,//dynamique, en fonction écran
+            //NON LA VRAI POS SUR LE TERRAIN
+            height:200.+sY,//dynamique, en fonction écran
+            
 
             speed: 0.,
             

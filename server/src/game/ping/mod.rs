@@ -62,7 +62,7 @@ pub fn ping_loop(players: &mut [network::player::Player]){
 
     let mut rackets:Vec<racket::Racket> = vec::Vec::new();
     for p in players.iter() {
-        rackets.push(racket::Racket::new(p, 250.));
+        rackets.push(racket::Racket::new(p, 250.*p.id as f64));//250 EST UNE CONSTATNE ENTRE SERVER ET 
         }
 
     //arrivée de nouvelles balles
@@ -137,6 +137,9 @@ fn send_game_data(
         data.append(&mut b.circle(p));
     }
     p.send(&data)
+    //1*racket : ID, posx[],posy[],sizeX[],sizeY[] | u8,?,?,?,?,?
+    //n                                            | u8
+    //n*ball : //posx[],posy[],radius[]            | ?,?,?
 }
 
 
@@ -167,9 +170,9 @@ fn recv_game_data(p: &mut player::Player,
                 let mut bb = [0_u8; 4];
 
                 bb.copy_from_slice(&buffer[..4]);
+                r.posY=f32::from_be_bytes(bb);
+                
                 //s.speed.x = f32::from_be_bytes(bb);
-                bb.copy_from_slice(&buffer[4..8]);
-                //s.speed.y = f32::from_be_bytes(bb);
 
 
             }
