@@ -68,6 +68,36 @@ export NDK_HOME=$PWD/android/ndk
 make init
 ```
 
+## Installation automatique (Windows)
+Pour effectuer les mêmes commandes que Linux, il est nécéssaire d'installer un wsl(Windows Subsystem for Linux), https://learn.microsoft.com/fr-fr/windows/wsl/install .
+Dans le cmd de Windows,
+
+``` sh
+wsl --install
+wsl --install -d Ubuntu(par exemple)
+```
+
+Puis ensuite lancer l'application wsl pour obtenir la fenetre en Linux. Un nom d'utilsateur et mot de passe seront demandés, les retenir. Il faut installer avec sudo apt:  unzip pour télécharger le sdk/ndk, make pour build le Makefile, gcc, build essentials pour tout ce qui est C++.
+``` sh
+sudo apt update
+sudo apt install make
+sudo apt install gcc
+sudo apt-get install build-essential
+sudo apt install unzip
+```
+
+Utilisez `cd /` et `ls` pour naviguer les fichiers et arriver dans le dossier /client, là où le Makefile et dossier android sont.
+``` sh
+cd /usr/bin...TODO
+```
+
+Puis enfin ``` sh
+make init
+```
+qui téléchargera automatiquement le `sdk` et `ndk`.
+
+
+
 # Build app
 Maintenant aller dans le dossier `app` et effectuez :
 - `make app` pour créer l'apk
