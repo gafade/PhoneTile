@@ -62,7 +62,9 @@ pub fn ping_loop(players: &mut [network::player::Player]){
 
     let mut rackets:Vec<racket::Racket> = vec::Vec::new();
     for p in players.iter() {
-        rackets.push(racket::Racket::new(p, 250.*p.id as f64));//250 EST UNE CONSTATNE ENTRE SERVER ET 
+        //pb d'argumetns, sX sert à rien, sY est la pos importante
+        rackets.push(racket::Racket::new(p,0., 250.*p.rank as f64));//250 EST UNE CONSTANTE ENTRE SERVER ET CLIENT
+        //VOIR client>ping>mod.rs ligne ...
         }
 
     //arrivée de nouvelles balles
@@ -170,7 +172,7 @@ fn recv_game_data(p: &mut player::Player,
                 let mut bb = [0_u8; 4];
 
                 bb.copy_from_slice(&buffer[..4]);
-                r.posY=f32::from_be_bytes(bb);
+                r.pos=f32::from_be_bytes(bb) as f64;
                 
                 //s.speed.x = f32::from_be_bytes(bb);
 

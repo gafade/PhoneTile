@@ -43,6 +43,7 @@ impl Racket {
     pub fn update_status(&mut self, absX:f64){//coordonnées virtuelles du doigt du joueur,
         // game s'occupe de convertir en fonction des dimensions du tel
 
+        self.pos=absX as f64;
 
 
 
