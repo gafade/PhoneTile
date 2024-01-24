@@ -324,8 +324,8 @@ fn main_rust() {
         }
         game::maze_fight::main_game(&mut network);
 
-        /* 
-        match game_chosen {
+        
+        /*match game_chosen {
             Game::MazeFight => game::maze_fight::main_game(&mut network),
             _ => {},
         }*/

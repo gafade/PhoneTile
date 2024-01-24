@@ -167,7 +167,7 @@ pub unsafe fn main_game(network: &mut network::Network) {
             }*/
 
         } else {
-            racket.posX=update_pos(1);//le tel actualise la pos en suivant le doigt
+            racket.posX=update_pos.y;//le tel actualise la pos en suivant le doigt
             //avec le bloc au dessus, la raquette va "blink" à la position à laquelle le servver croit qu'elle est
             }
 

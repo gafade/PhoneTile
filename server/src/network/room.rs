@@ -146,6 +146,7 @@ impl Room {
             client::Game::Racer => crate::game::racer::racer(&self.players),
             client::Game::Snake => {}
             client::Game::MazeFight => crate::game::maze_fight::maze_fight(&mut self.players)?,
+            client::Game::Ping => crate::game::ping::ping_loop(&mut self.players),
             client::Game::Test => test_function(&mut self.players),
             client::Game::Unknown => {}
         }

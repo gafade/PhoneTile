@@ -19,6 +19,7 @@ pub enum Game {
     Racer,
     Snake,
     MazeFight,
+    Ping,
     Test,
     Unknown,
 }
@@ -29,6 +30,7 @@ impl From<Game> for u16 {
             Game::Racer => 1,
             Game::Snake => 2,
             Game::MazeFight => 3,
+            Game::Ping => 4,
             Game::Test => 0x80,
             Game::Unknown => 0xff,
         }
@@ -41,6 +43,7 @@ impl From<u16> for Game {
             1 => Game::Racer,
             2 => Game::Snake,
             3 => Game::MazeFight,
+            4 => Game::Ping,
             0x80 => Game::Test,
             _ => Game::Unknown,
         }
@@ -53,6 +56,7 @@ impl Display for Game {
             Game::Racer => write!(f, "Racer"),
             Game::Snake => write!(f, "Snake"),
             Game::MazeFight => write!(f, "Maze-Fight"),
+            Game::Ping => write!(f, "Ping"),
             Game::Test => write!(f, "Test"),
             Game::Unknown => write!(f, "Unknown"),
         }

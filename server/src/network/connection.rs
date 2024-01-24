@@ -190,7 +190,7 @@ impl Connection {
     fn handshake(&mut self) -> Result<(), Error> {
         match packet::Packet::recv_packet(&mut self.stream) {
             Ok(packet) => {
-                packet.check_packet_flag(packet::Flag::Init)?;
+                //packet.check_packet_flag(packet::Flag::Init)?;
                 let mut tmp = [0_u8; 4];
                 tmp.copy_from_slice(&packet.data[..4]);
                 self.physical_height = f32::from_be_bytes(tmp);
@@ -234,7 +234,7 @@ impl Connection {
                 // listen to stream
                 match packet::Packet::recv_packet(&mut self.stream) {
                     Ok(packet) => {
-                        packet.check_packet_flag(packet::Flag::Lock)?;
+                        //packet.check_packet_flag(packet::Flag::Lock)?;
                         self.game_id = packet.option.into();
                     }
                     Err(_) => {
@@ -281,7 +281,7 @@ impl Connection {
                 // listen to stream
                 match packet::Packet::recv_packet(&mut self.stream) {
                     Ok(packet) => {
-                        packet.check_packet_flag(packet::Flag::Launch)?;
+                        //packet.check_packet_flag(packet::Flag::Launch)?;
                         self.game_id = packet.option.into();
                     }
                     Err(_) => {
