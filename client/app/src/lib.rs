@@ -29,12 +29,12 @@ pub extern "C" fn ANativeActivity_onCreate(
 mod game;
 mod network;
 mod ui;
+use game::Game;
 use ui::button;
 use ui::button::Draw;
 use ui::colors;
 use ui::keyboard::Keyboard;
 use ui::text::waiting_text;
-use game::Game;
 
 // Main function
 #[no_mangle]
@@ -223,36 +223,54 @@ fn main_rust() {
                                 colors::YELLOW,
                             );
 
-                            let game_id = 3*page_selection + 1;
+                            let game_id = 3 * page_selection + 1;
 
-                            if Game::from(game_id+3) == Game::Unknown {
-                                let top = button::top(screen_height, screen_width, game::title(game_id));
+                            if Game::from(game_id + 3) == Game::Unknown {
+                                let top =
+                                    button::top(screen_height, screen_width, game::title(game_id));
                                 top.draw();
                                 if top.click() {
                                     game_chosen = Game::from(game_id);
                                 }
 
-                                let mid_game = Game::from(game_id+1);
+                                let mid_game = Game::from(game_id + 1);
                                 if mid_game != Game::Unknown {
-                                    let middle = button::mid(screen_height, screen_width, game::title(game_id+1));
+                                    let middle = button::mid(
+                                        screen_height,
+                                        screen_width,
+                                        game::title(game_id + 1),
+                                    );
                                     middle.draw();
                                     if middle.click() {
-                                        game_chosen = Game::from(game_id+1);
+                                        game_chosen = Game::from(game_id + 1);
                                     }
                                 }
 
-                                let bottom_game = Game::from(game_id+2);
+                                let bottom_game = Game::from(game_id + 2);
                                 if bottom_game != Game::Unknown {
-                                    let bottom = button::bottom(screen_height, screen_width, game::title(game_id+2));
+                                    let bottom = button::bottom(
+                                        screen_height,
+                                        screen_width,
+                                        game::title(game_id + 2),
+                                    );
                                     bottom.draw();
                                     if bottom.click() {
-                                        game_chosen = Game::from(game_id+2);
+                                        game_chosen = Game::from(game_id + 2);
                                     }
                                 }
                             } else {
-                                let top = button::top(screen_height, screen_width, game::title(game_id));
-                                let middle = button::mid(screen_height, screen_width, game::title(game_id+1));
-                                let bottom = button::bottom(screen_height, screen_width, game::title(game_id+2));
+                                let top =
+                                    button::top(screen_height, screen_width, game::title(game_id));
+                                let middle = button::mid(
+                                    screen_height,
+                                    screen_width,
+                                    game::title(game_id + 1),
+                                );
+                                let bottom = button::bottom(
+                                    screen_height,
+                                    screen_width,
+                                    game::title(game_id + 2),
+                                );
                                 let next_page = button::next_page(screen_height, screen_width);
 
                                 top.draw();
@@ -264,17 +282,17 @@ fn main_rust() {
                                     game_chosen = Game::from(game_id);
                                 }
                                 if middle.click() {
-                                    game_chosen = Game::from(game_id+1);
+                                    game_chosen = Game::from(game_id + 1);
                                 }
                                 if bottom.click() {
-                                    game_chosen = Game::from(game_id+2);
+                                    game_chosen = Game::from(game_id + 2);
                                 }
 
                                 if next_page.click() {
                                     page_selection = page_selection + 1;
                                 }
                             }
-                            if game_chosen != Game::Unknown{
+                            if game_chosen != Game::Unknown {
                                 network.lock_room(game_chosen).unwrap();
                             }
                         } else {
@@ -322,13 +340,12 @@ fn main_rust() {
             });
             DrawFPS(10, 10);
         }
-        game::maze_fight::main_game(&mut network);
 
-        
-        /*match game_chosen {
+        match game_chosen {
             Game::MazeFight => game::maze_fight::main_game(&mut network),
+            Game::Ping => game::ping::main_game(&mut network),
             _ => {},
-        }*/
+        }
 
         CloseWindow();
     }

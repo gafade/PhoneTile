@@ -1,5 +1,6 @@
 use crate::network::packet;
 use crate::network::{self, player};
+use log::info;
 use rand::{self, random};
 use std::io::Error;
 use std::thread;
@@ -31,7 +32,7 @@ mod racket;
 
 const BALL_SIZE: usize = 20;
 const INIT_BALL_SPEED:f64= 10.;
-const SPAWN_SPEED:u16= 200;
+const SPAWN_SPEED:u16= 500;
 
 
 //////////////////////////////////////////////
@@ -47,6 +48,9 @@ pub fn ping_loop(players: &mut [network::player::Player]){
     //update les balles actives+ les desactiver si en dehors de l'ecran
 
     //INIT
+
+    info!(target: "ping_loop", "Jeu demarré");
+
     let mut width: Vec<f32> = vec![];
     let mut height: Vec<f32> = vec![];
     (width,height)=get_screen(players);
@@ -92,9 +96,11 @@ pub fn ping_loop(players: &mut [network::player::Player]){
         //Arrivé des nouveles balles
         spawn+=1;//ou spawn+score pour spawn de + en + vite??
         if spawn>SPAWN_SPEED{
+            info!(target : "ping_loop","nouvelle balle");
             let mut newball=ball::Ball::new(0.,0.,BALL_SIZE as f64);
             newball.enter(INIT_BALL_SPEED,random::<i8>());
             Active.push(newball);
+            spawn=0;
         }
         //communication et update position des rackets
         for p in players.iter_mut() {
