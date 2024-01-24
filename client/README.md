@@ -39,6 +39,47 @@ export NDK_HOME=$PWD/android/ndk
 
 > Note : Cette installation effectue également un patch spécifique à ce projet au ndk.
 
+## Installation automatique (Windows)
+Pour effectuer les mêmes commandes que Linux, il est nécéssaire d'installer un wsl(Windows Subsystem for Linux), https://learn.microsoft.com/fr-fr/windows/wsl/install .
+Dans le cmd de Windows,
+
+``` sh
+wsl --install
+wsl --install -d Ubuntu(par exemple)
+```
+
+Puis ensuite lancer l'application wsl pour obtenir la fenetre en Linux. Un nom d'utilisateur et mot de passe seront demandés, les retenir. Il faut installer avec sudo apt:  unzip pour télécharger le sdk/ndk, make pour build le Makefile, gcc, build essentials pour tout ce qui est C++, cargo pour rust, libclang pou le make app.
+``` sh
+sudo apt update
+sudo apt install make
+sudo apt install gcc
+sudo apt-get install build-essential
+sudo apt install unzip
+sudo apt install cargo
+sudo apt install clang-15
+```
+
+Utilisez `cd /` et `ls` pour naviguer les fichiers et arriver dans le dossier /client, là où le Makefile et dossier android sont.
+`/mnt/c` correspond au `C:\` de Windows :
+``` sh
+cd
+cd /mnt/c/Users/[you]/[your repositories]/PhoneTile/client
+```
+
+Puis enfin 
+``` sh
+make init
+```
+qui téléchargera automatiquement le `sdk` et `ndk`.
+
+Si l'installation du ndk ne le propose pas, exporter la variable `NDK_HOME` qui pointe vers `android/ndk` : 
+
+``` sh
+export NDK_HOME=$PWD/android/ndk
+```
+
+> Note : Cette installation effectue également un patch spécifique à ce projet au ndk.
+
 ## Installation manuelle (explication pour linux, adaptable pour MacOs)
 Étapes a effectuer dans le dossier `client/` (Dossier où ce trouve ce README).
 
@@ -67,6 +108,10 @@ export NDK_HOME=$PWD/android/ndk
 ``` sh
 make init
 ```
+
+
+
+
 
 # Build app
 Maintenant aller dans le dossier `app` et effectuez :
