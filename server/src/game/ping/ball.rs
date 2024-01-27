@@ -56,24 +56,24 @@ pub fn update_status(&mut self,
     //Gestion bords terrain (et pas de l'écran)
     if self.posX < 0. {
         self.speedX = self.speedX.abs()+1.;}
-    if self.posX > LARGEUR {// TODO Xmax
+    if self.posX > LONGUEUR {// TODO Xmax
         self.speedX = -self.speedX.abs()-1.;}
 
 
         if self.posY < 0.{
             self.speedY=self.speedY.abs()+1.;}
-        if self.speedY > LONGUEUR{// TODO Ymax
+        if self.posY > LARGEUR{// TODO Ymax
             self.speedY= - self.speedY.abs() - 1.;}
 
         //Gestion collision avec players
         for p in players{//cest une racket attention
-            if (self.posX-p.pos).abs()<p.sizeX &&
-            (self.posY-p.height).abs()<p.sizeY{
+            if (self.posX-p.height).abs()<p.sizeX &&
+            (self.posY-p.pos).abs()<p.sizeY{
                 //empecher clipping/multi rebonds
                 self.speedX=-self.speedX;
                 self.speedY=-self.speedY;
                 
-                self.posY=p.height+p.sizeY*self.speedY.signum()//si speedY>0 on ETAIT en train de descendre 
+                self.posX=p.height+p.sizeX*self.speedX.signum()//si speedY>0 on ETAIT en train de descendre 
                 //donc le rebondi implique de monter la balle
             }
         }
@@ -100,27 +100,27 @@ pub fn update_status(&mut self,
 
     }
 
-    pub fn enter(&mut self,Speed:f64,dir :i8 ){//pour commencer, seulement envoyées en diagonale
+    pub fn enter(&mut self,Speed:f64,dir :u8 ){//pour commencer, seulement envoyées en diagonale
 
 
         //TODO : trouver centre du terrain
-        self.posX=LARGEUR/2.;
-        self.posY=LONGUEUR/2.;
+        self.posX=LONGUEUR/2.;
+        self.posY=LARGEUR/2.;
 
         if(dir%4==0){
-            self.speedX=Speed;
+            self.speedX=10.*Speed;
             self.speedY=Speed;
                 }
         if(dir%4==1){
-            self.speedX=Speed;
+            self.speedX=10.*Speed;
             self.speedY=-Speed;
                 }
         if(dir%4==2){
-            self.speedX=-Speed;
+            self.speedX=-10.*Speed;
             self.speedY=Speed;
                 }
         if(dir%4==3){
-            self.speedX=-Speed;
+            self.speedX=-10.*Speed;
             self.speedY=-Speed;
                         }
         
@@ -131,16 +131,30 @@ pub fn update_status(&mut self,
     //pour la communication
     pub fn circle(&self, p : &player::Player) -> Vec<u8>{
 
+
+        let mut x:f32;
+        let mut y:f32; 
         let mut data = vec::Vec::new();
 
-        let (x, y) = p.to_local_coordinates(self.posX as f32,self.posY as f32);//on sen fiche selon y : cest un pong
+        //coord server -> coord physical
+        let factorX:f32=p.physical_width/LONGUEUR as f32;
+        let factorY:f32=p.physical_height/LARGEUR as f32;
+        if p.rank%2==0{
+            x=self.posX as f32-500.*(p.rank/2) as f32;
+            y=self.posY as f32;// - size/2 pour centrer sur le doigt?
+        }else{//inverser pour raquette en bas
+            x=5000.-self.posX as f32-500.*((p.rank-1)/2) as f32;
+            y=self.posY as f32;
+        }
+
+        (x, y) = p.to_local_coordinates(x*factorX,y*factorY);//on sen fiche selon y : cest un pong
         let pos_x = x.to_be_bytes();
         let pos_y = y.to_be_bytes();
         data.append(&mut pos_x.to_vec());
         data.append(&mut pos_y.to_vec());
 
-        //pour sizeX sizeY
-        let radius = self.size.to_be_bytes();
+        //pour size, independant de la taille de l'écran, toujours le meme nombre de pixels
+        let radius = (self.size as f32).to_be_bytes();
         data.append(&mut radius.to_vec());
 
 

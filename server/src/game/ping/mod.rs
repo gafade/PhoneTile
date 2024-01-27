@@ -9,7 +9,7 @@ use std::vec;
 
 
 
-use self::game::{get_screen, LONGUEUR};
+use self::game::{get_screen, LONGUEUR,LARGEUR};
 
 //////////////////////////////////////////////
 ///
@@ -31,10 +31,10 @@ mod racket;
 //////////////////////////////////////////////
 
 const BALL_SIZE: usize = 20;
-const INIT_BALL_SPEED:f64= 10.;
-const SPAWN_SPEED:u16= 500;
+const INIT_BALL_SPEED:f64= 4.;
+const SPAWN_SPEED:u16= 200;
 
-
+const RACKET_SIZE:f64=50.;
 //////////////////////////////////////////////
 ///
 ///
@@ -67,7 +67,7 @@ pub fn ping_loop(players: &mut [network::player::Player]){
     let mut rackets:Vec<racket::Racket> = vec::Vec::new();
     for p in players.iter() {
         //pb d'argumetns, sX sert à rien, sY est la pos importante
-        rackets.push(racket::Racket::new(p,0., 250.*p.rank as f64));//250 EST UNE CONSTANTE ENTRE SERVER ET CLIENT
+        rackets.push(racket::Racket::new(p,RACKET_SIZE,300.));//250 EST UNE CONSTANTE ENTRE SERVER ET CLIENT
         //VOIR client>ping>mod.rs ligne ...
         }
 
@@ -79,15 +79,17 @@ pub fn ping_loop(players: &mut [network::player::Player]){
             //recvei game data s'occupe d'update leurs valeurs?
         //}
         //enlever les balles au but
-        for index_b in (1..Active.len()){
+        for index_b in 0..Active.len(){
             Active[index_b].update_status(&mut rackets, internal_timer);
-            if Active[index_b].posY>0.95*LONGUEUR {
+            if Active[index_b].posX>0.95*LONGUEUR {
                 Off.push(Active.swap_remove(index_b));//changer de liste la balle Active->off
                 score.0+=1;
+                break;//sinon si une ballle est remove pendant la boucle, OutofRange error
             }
-            if Active[index_b].posY<0.05*LONGUEUR{
+            if Active[index_b].posX<0.05*LONGUEUR{
                 Off.push(Active.swap_remove(index_b));//changer de liste la balle Active->off
                 score.1+=1;
+                break;
             }
         }
 
@@ -98,7 +100,7 @@ pub fn ping_loop(players: &mut [network::player::Player]){
         if spawn>SPAWN_SPEED{
             info!(target : "ping_loop","nouvelle balle");
             let mut newball=ball::Ball::new(0.,0.,BALL_SIZE as f64);
-            newball.enter(INIT_BALL_SPEED,random::<i8>());
+            newball.enter(INIT_BALL_SPEED,random::<u8>());
             Active.push(newball);
             spawn=0;
         }
@@ -135,19 +137,17 @@ fn send_game_data(
 
         }
     }
-
     //pour l'instatn, on envoie toutes les balles actives, pas celles qui sont visibles du joueur
     data.push((balls.len() as u8).to_be());
 
     for b in balls.iter() {
         //CONTRAIREMENT A MAZE , on envoie pas la vitesse de la balle , les telephones ne vont pas devine la pos des balles
-
         data.append(&mut b.circle(p));
     }
     p.send(&data)
     //1*racket : ID, posx[],posy[],sizeX[],sizeY[] | u8,?,?,?,?,?
     //n                                            | u8
-    //n*ball : //posx[],posy[],radius[]            | ?,?,?
+    //n*ball : //posx[],posy[],radius[]            | u8,u8,u8
 }
 
 
@@ -178,11 +178,10 @@ fn recv_game_data(p: &mut player::Player,
                 let mut bb = [0_u8; 4];
 
                 bb.copy_from_slice(&buffer[..4]);
-                r.pos=f32::from_be_bytes(bb) as f64;
-                
+                let received=f32::from_be_bytes(bb);
+                r.pos=LARGEUR*(received/p.window_height as f32) as f64;
+                info!(target : "Racket","Position actuelle{}",received);
                 //s.speed.x = f32::from_be_bytes(bb);
-
-
             }
         }
 //////////////////////////

@@ -8,7 +8,7 @@ use time::Instant;
 
 use c_char;
 
-use raylib::{
+use raylib::{self,
     Color, DrawCircle, DrawRectanglePro, GetScreenHeight, GetScreenWidth, Rectangle, Vector2,
 };
 
@@ -154,21 +154,9 @@ pub fn main_game(network: &mut network::Network) {
                 }
             }*/
             } else {
-                racket.posX = update_pos.y as c_int; //le tel actualise la pos en suivant le doigt
+                racket.posY = update_pos.y as c_int; //le tel actualise la pos en suivant le doigt
                                                      //avec le bloc au dessus, la raquette va "blink" à la position à laquelle le servver croit qu'elle est
             }
-
-            // update bullet status
-            //c'est le server qui s'occupe de calculer la pos et collision des balles??
-            // pour l'instant pas de :
-            //"-Mais sur mon écran je t'ai touché??
-            //- Eh ben sur MON ecran tu m'as raté de 12 pixels sur la gauche"
-            /*
-            let mut i = 0;
-            while i < bullets.len() {
-
-            }
-            */
         
         internal_timer = Instant::now();
 
@@ -178,7 +166,7 @@ pub fn main_game(network: &mut network::Network) {
 
         //send update_pos en tant que la coord de notre racket. Donc avec notre ID player associé??
         // ou c'est fait automatiquement?
-        send(network, racket.posX);
+        send(network, update_pos);
 
         raylib::draw!({
             raylib::ClearBackground(raylib::Color {
@@ -219,9 +207,9 @@ fn unpack_game_data(_data: &[u8], rack: &mut Racket) -> (c_int, Vec<Ball>) {
     buffer.copy_from_slice(&data[4..8]);
     let pos_y = f32::from_be_bytes(buffer);
 
-    rack.posY = pos_y as c_int;
+    rack.posY = pos_y as c_int;//juste pour connaitre la pos à laquelle le server pense qu'on est
 
-    //on envoie aussi sizeX et sizeY pour voir les hitboxes au cas où
+    //on envoie aussi sizeX et sizeY pour voir les hitboxes au cas où donc on les ignore
 
     data = &data[16..];
 
@@ -252,10 +240,10 @@ fn unpack_game_data(_data: &[u8], rack: &mut Racket) -> (c_int, Vec<Ball>) {
 ///
 //////////////////////////////////////////////
 
-fn send(network: &mut network::Network, pos: c_int) {
+fn send(network: &mut network::Network, position:Vector2) {
     let mut data = [0_u8; 4];
 
-    let mut buffer = pos.to_be_bytes();
+    let mut buffer = position.y.to_be_bytes();
     data[..4].copy_from_slice(&buffer);
 
     network.send(&data).unwrap();
