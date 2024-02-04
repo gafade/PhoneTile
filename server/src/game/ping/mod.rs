@@ -32,7 +32,7 @@ mod racket;
 
 const BALL_SIZE: usize = 20;
 const INIT_BALL_SPEED:f64= 4.;
-const SPAWN_SPEED:u16= 200;
+const SPAWN_SPEED:u16= 400;
 
 const RACKET_SIZE:f64=50.;
 //////////////////////////////////////////////
@@ -67,7 +67,7 @@ pub fn ping_loop(players: &mut [network::player::Player]){
     let mut rackets:Vec<racket::Racket> = vec::Vec::new();
     for p in players.iter() {
         //pb d'argumetns, sX sert à rien, sY est la pos importante
-        rackets.push(racket::Racket::new(p,RACKET_SIZE,300.));//250 EST UNE CONSTANTE ENTRE SERVER ET CLIENT
+        rackets.push(racket::Racket::new(p,RACKET_SIZE,500.));//250 EST UNE CONSTANTE ENTRE SERVER ET CLIENT
         //VOIR client>ping>mod.rs ligne ...
         }
 
@@ -82,11 +82,13 @@ pub fn ping_loop(players: &mut [network::player::Player]){
         for index_b in 0..Active.len(){
             Active[index_b].update_status(&mut rackets, internal_timer);
             if Active[index_b].posX>0.95*LONGUEUR {
+                info!(target: "ping loop","Elimination de la balle X: {}, Y {}",Active[index_b].posX,Active[index_b].posY);
                 Off.push(Active.swap_remove(index_b));//changer de liste la balle Active->off
                 score.0+=1;
                 break;//sinon si une ballle est remove pendant la boucle, OutofRange error
             }
             if Active[index_b].posX<0.05*LONGUEUR{
+                info!(target: "ping loop","Elimination de la balle X: {}, Y {}",Active[index_b].posX,Active[index_b].posY);
                 Off.push(Active.swap_remove(index_b));//changer de liste la balle Active->off
                 score.1+=1;
                 break;

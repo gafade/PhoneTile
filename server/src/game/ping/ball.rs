@@ -60,21 +60,21 @@ pub fn update_status(&mut self,
         self.speedX = -self.speedX.abs()-1.;}
 
 
-        if self.posY < 0.{
+    if self.posY < 0.{
             self.speedY=self.speedY.abs()+1.;}
-        if self.posY > LARGEUR{// TODO Ymax
+    if self.posY > LARGEUR{// TODO Ymax
             self.speedY= - self.speedY.abs() - 1.;}
 
-        //Gestion collision avec players
-        for p in players{//cest une racket attention
-            if (self.posX-p.height).abs()<p.sizeX &&
-            (self.posY-p.pos).abs()<p.sizeY{
-                //empecher clipping/multi rebonds
-                self.speedX=-self.speedX;
-                self.speedY=-self.speedY;
-                
-                self.posX=p.height+p.sizeX*self.speedX.signum()//si speedY>0 on ETAIT en train de descendre 
-                //donc le rebondi implique de monter la balle
+    //Gestion collision avec players
+    for p in players{//cest une racket attention
+        if (self.posX-p.height).abs()<p.sizeX &&
+        (self.posY-p.pos).abs()<p.sizeY{
+            //empecher clipping/multi rebonds
+            self.speedX=-self.speedX;
+            //self.speedY=-self.speedY;
+             
+            self.posX=p.height+p.sizeX*self.speedX.signum()//si speedY>0 on ETAIT en train de descendre 
+            //donc le rebondi implique de monter la balle
             }
         }
 
@@ -108,11 +108,11 @@ pub fn update_status(&mut self,
         self.posY=LARGEUR/2.;
 
         if(dir%4==0){
-            self.speedX=10.*Speed;
+            self.speedX=-10.*Speed;//+
             self.speedY=Speed;
                 }
         if(dir%4==1){
-            self.speedX=10.*Speed;
+            self.speedX=-10.*Speed;//+
             self.speedY=-Speed;
                 }
         if(dir%4==2){
@@ -137,17 +137,18 @@ pub fn update_status(&mut self,
         let mut data = vec::Vec::new();
 
         //coord server -> coord physical
-        let factorX:f32=p.physical_width/LONGUEUR as f32;
+        let factorX:f32=p.physical_width/LONGUEUR as f32;//ON VOIT TOUT LE TERRAIN
+        let factorX:f32=p.physical_width/2500.; //on voit que ce qu'on est censé voir
         let factorY:f32=p.physical_height/LARGEUR as f32;
         if p.rank%2==0{
             x=self.posX as f32-500.*(p.rank/2) as f32;
             y=self.posY as f32;// - size/2 pour centrer sur le doigt?
         }else{//inverser pour raquette en bas
             x=5000.-self.posX as f32-500.*((p.rank-1)/2) as f32;
-            y=self.posY as f32;
+            y=500.-self.posY as f32;
         }
 
-        (x, y) = p.to_local_coordinates(x*factorX,y*factorY);//on sen fiche selon y : cest un pong
+        (x, y) = (x*factorX,y*factorY);//on sen fiche selon y : cest un pong
         let pos_x = x.to_be_bytes();
         let pos_y = y.to_be_bytes();
         data.append(&mut pos_x.to_vec());

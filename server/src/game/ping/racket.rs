@@ -87,16 +87,17 @@ impl Racket {
         let mut sY:f32;
 
         //coord server -> coord physical
-        let factorX=p.physical_width/LONGUEUR as f32;
+        let factorX:f32=p.physical_width/LONGUEUR as f32;//ON VOIT TOUT LE TERRAIN
+        let factorX:f32=p.physical_width/2500.; //on voit que ce qu'on est censé voir
         let factorY=p.physical_height/LARGEUR as f32;
         if self.id%2==0{
             x=self.height as f32-500.*(p.rank/2) as f32;
             y=self.pos as f32;// - size/2 pour centrer sur le doigt?
         }else{//inverser pour raquette en bas
             x=5000.-self.height as f32-500.*((p.rank-1)/2) as f32;
-            y=self.pos as f32;
+            y=500.-self.pos as f32;
         }
-        (x,y)=p.to_local_coordinates(x*factorX,y*factorY);
+        (x,y)=(x*factorX,y*factorY);
 
         let pos_x = x.to_be_bytes();
         let pos_y = y.to_be_bytes();
@@ -104,7 +105,7 @@ impl Racket {
         data.append(&mut pos_y.to_vec());
 
         //pour sizeX sizeY, inutile
-        (sX,sY)=p.to_local_coordinates(self.sizeX as f32, self.sizeY as f32);
+        (sX,sY)=(self.sizeX as f32, self.sizeY as f32);
         let size_x = sX.to_be_bytes();
         let size_y = sY.to_be_bytes();
         data.append(&mut size_x.to_vec());
